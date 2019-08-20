@@ -8,6 +8,8 @@ test('API', () => {
   expect(results.r4).toBe(false);
   expect(results.r5).toBe('equals');
   expect(results.r6).toBe('equals');
+  expect(results.r7).toBe('nextEquals');
+  expect(results.r8).toBe('furtherNextEquals');
   const mockFn = jest.fn(() => {});
   expect(If(true).elseDo(mockFn(), mockFn()).end).toBeUndefined();
   expect(mockFn.mock.calls.length).toBe(0);
@@ -18,6 +20,13 @@ test('API', () => {
       .elseDo(mockFn()).end
   ).toBeUndefined();
   expect(mockFn.mock.calls.length).toBe(2);
+  mockFn.mockReset();
+  expect(
+    If(false)
+      .thenDo(mockFn(), mockFn())
+      .elseIf(true)
+      .then('result').end
+  ).toBe('result');
   mockFn.mockReset();
   expect(
     If(true)

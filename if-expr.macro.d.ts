@@ -4,6 +4,7 @@ interface IfChain<TSuccess = undefined, TFailure = undefined> {
   thenDo<T>(...exprs: any[]): IfChain<TSuccess, TFailure>;
   elseDo<T>(...exprs: any[]): IfChain<TSuccess, TFailure>;
   end: TSuccess | TFailure;
+  elseIf<T>(expr: T): IfChain<undefined, undefined>;
 }
 
 declare function If(target: any): IfChain;

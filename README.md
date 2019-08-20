@@ -100,6 +100,19 @@ const result = If(true)
 // result is what someOtherFn returns
 ```
 
+
+```
+const result = If(false)
+  .then(someFn())
+  .elseIf(true)
+  .then(someOtherFn())
+  .end;
+
+// Only someOtherFn is called
+// result is what someOtherFn returns
+```
+
+
 - Side-effect only branches:
 
 ```

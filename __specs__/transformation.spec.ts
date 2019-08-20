@@ -9,7 +9,7 @@ test('Transformations', () => {
     Object.defineProperty(exports, \\"__esModule\\", {
       value: true
     });
-    exports.r6 = exports.r5 = exports.r4 = exports.r3 = exports.r2 = exports.r1 = void 0;
+    exports.r8 = exports.r7 = exports.r6 = exports.r5 = exports.r4 = exports.r3 = exports.r2 = exports.r1 = void 0;
 
     const fn = i => i;
 
@@ -24,6 +24,10 @@ test('Transformations', () => {
     const r5 = fn(2 === 2 ? 'equals' : 'unequal');
     exports.r5 = r5;
     const r6 = fn(fn(2 === 2) ? 'equals' : 'unequal');
-    exports.r6 = r6;"
+    exports.r6 = r6;
+    const r7 = fn(fn(2 !== 2) ? 'equals' : 3 === 3 ? 'nextEquals' : undefined);
+    exports.r7 = r7;
+    const r8 = fn(fn(2 !== 2) ? 'equals' : 3 !== 3 ? 'nextEquals' : 4 === 4 ? 'furtherNextEquals' : undefined);
+    exports.r8 = r8;"
   `);
 });
