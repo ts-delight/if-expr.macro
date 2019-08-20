@@ -1,0 +1,38 @@
+{
+    "name": "@ts-delight/if-expr.macro",
+    "version": "1.0.0",
+    "description": "Zero-overhead type-safe expression-oriented alternative to javascript if statements",
+    "main": "if-expr.macro.js",
+    "types": "if-expr.macro.d.ts",
+    "scripts": {
+        "format": "prettier --write ./**/*.js ./**/*.ts",
+        "test": "tsc && jest"
+    },
+    "prettier": {
+        "printWidth": 80,
+        "semi": true,
+        "singleQuote": true,
+        "trailingComma": "es5"
+    },
+    "keywords": [
+        "type-safe",
+        "programming",
+        "functional-programming",
+        "if-expressions",
+        "babel-plugin-macros"
+    ],
+    "author": "Lorefnon <lorefnon@gmail.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "@babel/core": "^7.5.5",
+        "@babel/preset-env": "^7.5.5",
+        "@babel/preset-typescript": "^7.3.3",
+        "@types/jest": "^24.0.18",
+        "@types/node": "^12.7.2",
+        "babel-jest": "^24.9.0",
+        "babel-plugin-macros": "^2.6.1",
+        "jest": "^24.9.0",
+        "prettier": "^1.18.2",
+        "typescript": "^3.5.3"
+    }
+}
