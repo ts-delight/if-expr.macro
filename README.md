@@ -6,7 +6,7 @@ An expression-oriented fluent alternative to javascript's if-statement that comp
 
 Source:
 
-```
+```js
 processResult(
   If(2 === 2)
     .then('equals')
@@ -17,7 +17,7 @@ processResult(
 
 Compiled output:
 
-```
+```js
 processResult(
   2 === 2 ? 'equals' : 'unequal'
 )
@@ -38,13 +38,13 @@ Refer babel's [setup instructions](https://babeljs.io/setup) to learn how to set
 
 1. Install `babel-plugin-macros` and `if-expr.macro`:
 
-```
+```js
 npm install --save-dev babel-plugin-macros if-expr.macro
 ```
 
 2. Add babel-plugin-macros to .babelrc (if not already preset):
 
-```
+```js
 // .babelrc
 
 module.exports = {
@@ -60,7 +60,7 @@ module.exports = {
 
 3. Import `if-expr.macro` in your code:
 
-```
+```js
 // src/foo.js
 
 import If from 'if-expr.macro';
@@ -72,7 +72,7 @@ const result = If(true).then(true).end;
 
 - Branches are evaluated lazily
 
-```
+```js
 const result = If(true).then(someFn()).else(someOtherFn()).end;
 
 // result is what someFn returns
@@ -81,7 +81,7 @@ const result = If(true).then(someFn()).else(someOtherFn()).end;
 
 - then/else branches are optional
 
-```
+```js
 const result = If(false).then(someFn()).end;
 
 // someFn is never called
@@ -90,7 +90,7 @@ const result = If(false).then(someFn()).end;
 
 - Multiple then/else branches are allowed:
 
-```
+```js
 const result = If(true)
   .then(someFn())
   .then(someOtherFn())
@@ -101,7 +101,7 @@ const result = If(true)
 ```
 
 
-```
+```js
 const result = If(false)
   .then(someFn())
   .elseIf(true)
@@ -115,7 +115,7 @@ const result = If(false)
 
 - Side-effect only branches:
 
-```
+```js
 If(true)
     .thenDo(someFn(), someOtherFn(), yetAnotherFn())
     .thenDo(someOtherFn())
@@ -127,7 +127,7 @@ If(true)
 
 - Side-effect only branches can be combined with then/else branches:
 
-```
+```js
 const result = If(true)
     .then(someFn())
     .thenDo(someOtherFn())
@@ -145,7 +145,7 @@ All code must be processed through babel. Compilation through tsc (only) is not 
 
 Recommended babel configuration:
 
-```
+```js
 // .babelrc
 
 module.exports = {
@@ -164,7 +164,7 @@ module.exports = {
 
 One caveat is that TypeScript's flow-based type inference will not treat `.then`, `.else` branches same as normal `if/else` branches.
 
-```
+```js
 const a: undefined | string = getSomeValue();
 
 if (a) {
@@ -173,7 +173,7 @@ if (a) {
 }
 ```
 
-```
+```js
 const a: undefined | string = getSomeValue();
 
 If(a).then(someFnThatexpectsString(a as string)).end
@@ -191,7 +191,7 @@ Every If/then/else chain fluent must end with an `.end` invocation without inter
 
 For example:
 
-```
+```js
 const a = 10;
 const intermediate = If(a === 10).then('equal');
 const result = intermediate.end;

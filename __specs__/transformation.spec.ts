@@ -9,7 +9,7 @@ test('Transformations', () => {
     Object.defineProperty(exports, \\"__esModule\\", {
       value: true
     });
-    exports.r8 = exports.r7 = exports.r6 = exports.r5 = exports.r4 = exports.r3 = exports.r2 = exports.r1 = void 0;
+    exports.r9 = exports.r8 = exports.r7 = exports.r6 = exports.r5 = exports.r4 = exports.r3 = exports.r2 = exports.r1 = void 0;
 
     const fn = i => i;
 
@@ -28,6 +28,11 @@ test('Transformations', () => {
     const r7 = fn(fn(2 !== 2) ? 'equals' : 3 === 3 ? 'nextEquals' : undefined);
     exports.r7 = r7;
     const r8 = fn(fn(2 !== 2) ? 'equals' : 3 !== 3 ? 'nextEquals' : 4 === 4 ? 'furtherNextEquals' : undefined);
-    exports.r8 = r8;"
+    exports.r8 = r8;
+    const r9 = ( // If branch goes here:
+    true ? true : false ? true : undefined) ? // Then branch goes here:
+    true ? true : false ? true : undefined : // else branch goes here:
+    true ? true : false ? true : undefined;
+    exports.r9 = r9;"
   `);
 });

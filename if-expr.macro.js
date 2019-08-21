@@ -1,6 +1,6 @@
 const { createMacro, MacroError } = require('babel-plugin-macros');
 
-function IfExpr({ references, state, babel }) {
+const IfExpr = ({ references, state, babel }) => {
   const t = babel.types;
   const refKeys = Object.keys(references);
   const invalidRefKeys = refKeys.filter(key => key !== 'default');
@@ -11,29 +11,47 @@ function IfExpr({ references, state, babel }) {
     );
   }
 
-  for (const nodePath of references.default) {
-    let parentPath = parentPathOf(nodePath);
-    if (parentPath.node.type !== 'CallExpression') {
-      throw new MacroError(
-        `Expected If to be invoked as a function at ${stringifyLocStart(
-          parentPath.node.loc
-        )}`
-      );
-    }
-    if (parentPath.node.arguments.length !== 1) {
-      throw new MacroError(
-        `Expected If to have been invoked with a single argument at ${stringifyLocStart(
-          parentPath.node.loc
-        )}`
-      );
-    }
-    const target = parentPath.node.arguments[0];
-    const { topMostPath, resultExpr } = processChain(parentPath, target, t);
-    topMostPath.replaceWith(resultExpr);
+  const processed = new Set();
+  const refs = references.default;
+
+  for (let i = 0; i < refs.length; i++) {
+    const nodePath = refs[i];
+    processReference(nodePath, refs.slice(i + 1), processed, t);
   }
-}
+};
 
 module.exports = createMacro(IfExpr);
+
+const processReference = (nodePath, references, processed, t) => {
+  if (processed.has(nodePath.node)) return;
+  let parentPath = parentPathOf(nodePath);
+  if (parentPath.node.type !== 'CallExpression') {
+    throw new MacroError(
+      `Expected If to be invoked as a function at ${stringifyLocStart(
+        parentPath.node.loc
+      )}`
+    );
+  }
+  const args = parentPath.node.arguments;
+  ensureArgsProcessed(args, references, processed, t);
+  if (args.length !== 1) {
+    throw new MacroError(
+      `Expected If to have been invoked with a single argument at ${stringifyLocStart(
+        parentPath.node.loc
+      )}`
+    );
+  }
+  const target = parentPath.node.arguments[0];
+  const { topMostPath, resultExpr } = processChain(
+    parentPath,
+    target,
+    references,
+    processed,
+    t
+  );
+  topMostPath.replaceWith(resultExpr);
+  processed.add(nodePath.node);
+};
 
 const parentPathOf = nodePath => nodePath.findParent(() => true);
 
@@ -43,7 +61,7 @@ const stringifyLocStart = loc => {
   return `L${loc.start.line}C${loc.start.column}`;
 };
 
-const processChain = (parentPath, target, t) => {
+const processChain = (parentPath, target, references, processed, t) => {
   const branches = {
     consequent: [],
     alternate: [],
@@ -64,8 +82,14 @@ const processChain = (parentPath, target, t) => {
       if (branch) {
         parentPath = parentPathOf(parentPath);
         assertCallExpr(parentPath, propName);
+        ensureArgsProcessed(
+          parentPath.node.arguments,
+          references,
+          processed,
+          t
+        );
         if (propName === 'then' || propName === 'else') {
-          const arg = assertSingle(parentPath, propName);
+          const arg = ensureSingleArg(parentPath, propName);
           assertExprLike(arg, parentPath, propName);
           branches[branch].push(arg);
         } else {
@@ -85,9 +109,21 @@ const processChain = (parentPath, target, t) => {
       } else if (propName === 'elseIf') {
         parentPath = parentPathOf(parentPath);
         assertCallExpr(parentPath, propName);
-        const arg = assertSingle(parentPath, propName);
+        ensureArgsProcessed(
+          parentPath.node.arguments,
+          references,
+          processed,
+          t
+        );
+        const arg = ensureSingleArg(parentPath, propName);
         assertExprLike(arg, parentPath, propName);
-        const { topMostPath, resultExpr } = processChain(parentPath, arg, t);
+        const { topMostPath, resultExpr } = processChain(
+          parentPath,
+          arg,
+          references,
+          processed,
+          t
+        );
         branches.alternate.push(resultExpr);
         return {
           topMostPath,
@@ -134,7 +170,7 @@ const makeConditional = (branches, target, t) => {
   );
 };
 
-const assertSingle = (parentPath, propName) => {
+const ensureSingleArg = (parentPath, propName) => {
   if (parentPath.node.arguments.length !== 1) {
     throw new MacroError(
       `Expected member ${propName} to have been invoked with one argument at ${stringifyLocStart(
@@ -156,5 +192,16 @@ const assertExprLike = (arg, parentPath, propName) => {
         parentPath.node.loc
       )}`
     );
+  }
+};
+
+const ensureArgsProcessed = (args, references, processed, t) => {
+  for (const arg of args) {
+    for (let i = 0; i < references.length; i++) {
+      const nodePath = references[i];
+      const parent = nodePath.findParent(p => p.node === arg);
+      if (!parent) continue;
+      processReference(nodePath, references.slice(i + 1), processed, t);
+    }
   }
 };

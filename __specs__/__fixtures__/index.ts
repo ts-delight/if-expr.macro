@@ -41,3 +41,25 @@ export const r8 = fn(
     .elseIf(4 === 4)
     .then('furtherNextEquals').end
 );
+
+export const r9 = If(
+  // If branch goes here:
+  If(true)
+    .then(true)
+    .elseIf(false)
+    .then(true).end
+)
+  .then(
+    // Then branch goes here:
+    If(true)
+      .then(true)
+      .elseIf(false)
+      .then(true).end
+  )
+  .else(
+    // else branch goes here:
+    If(true)
+      .then(true)
+      .elseIf(false)
+      .then(true).end
+  ).end;
