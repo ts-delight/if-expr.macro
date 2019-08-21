@@ -30,6 +30,9 @@ processResult(
 3. Solutions like [lodash.cond](https://lodash.com/docs/latest#cond) have unnecessary function invocation overhead and are less readable.
    To ensure lazy evaluation we need to wrap each branch in function.
 
+This plugin is likely to become obsolete once [do-expressions](https://github.com/tc39/proposal-do-expressions) become supported by typescript ([Relevant issue](https://github.com/Microsoft/TypeScript/issues/13156)).
+If you don't care about type checking, then you can try out [this babel-plugin](https://babeljs.io/docs/en/babel-plugin-proposal-do-expressions).
+
 ## Installation
 
 This utility is implemented as a [babel-macro](https://github.com/kentcdodds/babel-plugin-macros).
