@@ -1,6 +1,6 @@
 {
     "name": "@ts-delight/if-expr.macro",
-    "version": "0.0.0",
+    "version": "1.0.0-alpha.1",
     "description": "Zero-overhead type-safe expression-oriented alternative to javascript if statements",
     "main": "if-expr.macro.js",
     "types": "if-expr.macro.d.ts",
@@ -9,7 +9,7 @@
         "test": "tsc && jest"
     },
     "publishConfig": {
-	"access": "public"
+        "access": "public"
     },
     "prettier": {
         "printWidth": 80,
