@@ -101,7 +101,9 @@ const processChain = (parentPath, target, references, processed, t) => {
           }
           branches[branch].push(last);
         }
-      } else if (propName === 'end' || propName === 'end$') {
+      } else if (propName === 'end') {
+        parentPath = parentPathOf(parentPath);
+        assertCallExpr(parentPath, propName);
         return {
           topMostPath: parentPath,
           resultExpr: makeConditional(branches, target, t),

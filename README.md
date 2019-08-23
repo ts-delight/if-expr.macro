@@ -11,7 +11,7 @@ processResult(
   If(2 === 2)
     .then('equals')
     .else('unequal')
-    .end
+    .end()
 )
 ```
 
@@ -68,7 +68,7 @@ module.exports = {
 
 import If from 'if-expr.macro';
 
-const result = If(true).then(true).end;
+const result = If(true).then(true).end();
 ```
 
 ## Features
@@ -76,7 +76,7 @@ const result = If(true).then(true).end;
 - Branches are evaluated lazily
 
 ```js
-const result = If(true).then(someFn()).else(someOtherFn()).end;
+const result = If(true).then(someFn()).else(someOtherFn()).end();
 
 // result is what someFn returns
 // someOtherFn is never called
@@ -85,7 +85,7 @@ const result = If(true).then(someFn()).else(someOtherFn()).end;
 - then/else branches are optional
 
 ```js
-const result = If(false).then(someFn()).end;
+const result = If(false).then(someFn()).end();
 
 // someFn is never called
 // result is undefined
@@ -97,7 +97,7 @@ const result = If(false).then(someFn()).end;
 const result = If(true)
   .then(someFn())
   .then(someOtherFn())
-  .end;
+  .end();
 
 // Both someFn and someOtherFn are called
 // result is what someOtherFn returns
@@ -109,7 +109,7 @@ const result = If(false)
   .then(someFn())
   .elseIf(true)
   .then(someOtherFn())
-  .end;
+  .end();
 
 // Only someOtherFn is called
 // result is what someOtherFn returns
@@ -122,7 +122,7 @@ const result = If(false)
 If(true)
     .thenDo(someFn(), someOtherFn(), yetAnotherFn())
     .thenDo(someOtherFn())
-    .end;
+    .end();
 
 // All of the functions are called (in specified order), but their return values are discareded
 // The expression evaluates to undefined
@@ -134,7 +134,7 @@ If(true)
 const result = If(true)
     .then(someFn())
     .thenDo(someOtherFn())
-    .end;
+    .end();
 
 // result is what someFn returns
 // returned value (if any) of someOtherFn is discarded
@@ -179,7 +179,7 @@ if (a) {
 ```js
 const a: undefined | string = getSomeValue();
 
-If(a).then(someFnThatexpectsString(a as string)).end
+If(a).then(someFnThatexpectsString(a as string)).end()
                                      |________|
 // We need to identify  -.             ^
 // a as a string to      |------------/
@@ -190,19 +190,23 @@ AFAIK, currently there is no workaround for feasible.
 
 ## Caveats
 
-Every If/then/else chain fluent must end with an `.end` invocation without interruptions.
+Every If/then/else chain fluent must end with an `.end()` invocation without interruptions.
 
 For example:
 
 ```js
 const a = 10;
 const intermediate = If(a === 10).then('equal');
-const result = intermediate.end;
+const result = intermediate.end();
 ```
 
 Above code will fail to compile.
 
 Because the entire If/then/else chain is compiled away, anything return by If/then/else can not be assigned, referenced, or used in any computation.
+
+## You may also like:
+
+1. **[switch-expr.macro](https://github.com/ts-delight/switch-expr.macro):** Similar utility, providing a fluent expression-oriented macro replacement for switch statement
 
 ## License
 
