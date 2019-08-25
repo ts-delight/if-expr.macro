@@ -10,17 +10,14 @@ Source:
 processResult(
   If(2 === 2)
     .then('equals')
-    .else('unequal')
-    .end()
-)
+    .else('unequal')()
+);
 ```
 
 Compiled output:
 
 ```js
-processResult(
-  2 === 2 ? 'equals' : 'unequal'
-)
+processResult(2 === 2 ? 'equals' : 'unequal');
 ```
 
 ## Why ?
@@ -55,7 +52,7 @@ module.exports = {
     // ... other presets
   ],
   plugins: [
-    'babel-plugin-macros'    // <-- REQUIRED
+    'babel-plugin-macros', // <-- REQUIRED
     // ... other plugins
   ],
 };
@@ -68,7 +65,7 @@ module.exports = {
 
 import If from 'if-expr.macro';
 
-const result = If(true).then(true).end();
+const result = If(true).then(true)();
 ```
 
 ## Features
@@ -76,7 +73,9 @@ const result = If(true).then(true).end();
 - Branches are evaluated lazily
 
 ```js
-const result = If(true).then(someFn()).else(someOtherFn()).end();
+const result = If(true)
+  .then(someFn())
+  .else(someOtherFn())();
 
 // result is what someFn returns
 // someOtherFn is never called
@@ -85,7 +84,7 @@ const result = If(true).then(someFn()).else(someOtherFn()).end();
 - then/else branches are optional
 
 ```js
-const result = If(false).then(someFn()).end();
+const result = If(false).then(someFn())();
 
 // someFn is never called
 // result is undefined
@@ -96,33 +95,28 @@ const result = If(false).then(someFn()).end();
 ```js
 const result = If(true)
   .then(someFn())
-  .then(someOtherFn())
-  .end();
+  .then(someOtherFn())();
 
 // Both someFn and someOtherFn are called
 // result is what someOtherFn returns
 ```
 
-
 ```js
 const result = If(false)
   .then(someFn())
   .elseIf(true)
-  .then(someOtherFn())
-  .end();
+  .then(someOtherFn())();
 
 // Only someOtherFn is called
 // result is what someOtherFn returns
 ```
 
-
 - Side-effect only branches:
 
 ```js
 If(true)
-    .thenDo(someFn(), someOtherFn(), yetAnotherFn())
-    .thenDo(someOtherFn())
-    .end();
+  .thenDo(someFn(), someOtherFn(), yetAnotherFn())
+  .thenDo(someOtherFn())();
 
 // All of the functions are called (in specified order), but their return values are discareded
 // The expression evaluates to undefined
@@ -132,9 +126,8 @@ If(true)
 
 ```js
 const result = If(true)
-    .then(someFn())
-    .thenDo(someOtherFn())
-    .end();
+  .then(someFn())
+  .thenDo(someOtherFn())();
 
 // result is what someFn returns
 // returned value (if any) of someOtherFn is discarded
@@ -157,7 +150,7 @@ module.exports = {
     // ... other presets
   ],
   plugins: [
-    'babel-plugin-macros'
+    'babel-plugin-macros',
     // ... other plugins
   ],
 };
@@ -171,15 +164,15 @@ One caveat is that TypeScript's flow-based type inference will not treat `.then`
 const a: undefined | string = getSomeValue();
 
 if (a) {
-    someFnThatExpectsString(a); // Not an error because TypeScript is smart enough to know
-                                // that a can not be undefined in this branch
+  someFnThatExpectsString(a); // Not an error because TypeScript is smart enough to know
+  // that a can not be undefined in this branch
 }
 ```
 
 ```js
 const a: undefined | string = getSomeValue();
 
-If(a).then(someFnThatexpectsString(a as string)).end()
+If(a).then(someFnThatexpectsString(a as string))()
                                      |________|
 // We need to identify  -.             ^
 // a as a string to      |------------/
@@ -190,14 +183,14 @@ AFAIK, currently there is no workaround for feasible.
 
 ## Caveats
 
-Every If/then/else chain fluent must end with an `.end()` invocation without interruptions.
+Every If/then/else chain fluent must end with a final function invocation without interruptions.
 
 For example:
 
 ```js
 const a = 10;
 const intermediate = If(a === 10).then('equal');
-const result = intermediate.end();
+const result = intermediate();
 ```
 
 Above code will fail to compile.
