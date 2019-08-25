@@ -9,6 +9,8 @@ const IfExpr = ({ references, state, babel }) => {
 
   // Utilities to help with ast construction
   const t = babel.types;
+  // Complete source code if file
+  const { code } = state.file;
   const refKeys = Object.keys(references);
   const invalidRefKeys = refKeys.filter(key => key !== 'default');
 

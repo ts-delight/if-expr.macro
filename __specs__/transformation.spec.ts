@@ -1,5 +1,21 @@
 import * as path from 'path';
-import { transformFileSync } from '@babel/core';
+import { transformFileSync, transformSync } from '@babel/core';
+
+const catchError = (fn: () => void): Error => {
+  try {
+    fn();
+    throw new Error('Exception not encountered');
+  } catch (e) {
+    return e;
+  }
+};
+
+const transformSnippet = (src: string, addImport = true) => {
+  if (addImport) src = `import If from '../../if-expr.macro';\n${src}`;
+  return transformSync(src, {
+    filename: path.join(__dirname, '__fixures__/index.ts'),
+  });
+};
 
 test('Transformations', () => {
   expect(transformFileSync(path.join(__dirname, '__fixtures__/index.ts'))!.code)
@@ -35,4 +51,24 @@ test('Transformations', () => {
     true ? true : false ? true : undefined;
     exports.r9 = r9;"
   `);
+});
+
+test('Error reports', () => {
+  expect(
+    catchError(() => transformSnippet('If(true).then(false).else(true)'))
+      .message
+  ).toMatchInlineSnapshot(`"../../if-expr.macro: ERR5: Unterminated If-chain"`);
+
+  expect(
+    catchError(() => transformSnippet('If(true).them(false).else(true)'))
+      .message
+  ).toMatchInlineSnapshot(
+    `"../../if-expr.macro: ERR6: Invocation of unknown member on If-chain"`
+  );
+
+  expect(
+    catchError(() => transformSnippet('If(true).then')).message
+  ).toMatchInlineSnapshot(
+    `"../../if-expr.macro: ERR4: Expected member then to have been invoked as a function"`
+  );
 });
