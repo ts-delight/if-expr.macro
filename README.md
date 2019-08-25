@@ -7,6 +7,8 @@ An expression-oriented fluent alternative to javascript's if-statement that comp
 Source:
 
 ```js
+import If from '@ts-delight/if-expr.macro';
+
 processResult(
   If(2 === 2)
     .then('equals')
@@ -38,8 +40,8 @@ Refer babel's [setup instructions](https://babeljs.io/setup) to learn how to set
 
 1. Install `babel-plugin-macros` and `if-expr.macro`:
 
-```js
-npm install --save-dev babel-plugin-macros if-expr.macro
+```sh
+npm install --save-dev babel-plugin-macros @ts-delight/if-expr.macro
 ```
 
 2. Add babel-plugin-macros to .babelrc (if not already preset):
@@ -63,7 +65,7 @@ module.exports = {
 ```js
 // src/foo.js
 
-import If from 'if-expr.macro';
+import If from '@ts-delight/if-expr.macro';
 
 const result = If(true).then(true)();
 ```
